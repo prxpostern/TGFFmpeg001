@@ -1,0 +1,37 @@
+{
+    "name": "CmprBot001",
+    "description": "320p and audio ripper",
+    "repository": "https://github.com/prxpostern/MultiVideoCompressor001",
+    "success_url": "https://t.me/ali110ali",
+    "stack": "container",
+    "env": {
+        "BOT_TOKEN": {
+
+        "description": "Your bot token, as a string.",
+
+        "value": ""
+
+        },
+
+        "API_ID": {
+
+        "description": "Get this value from https://my.telegram.org",
+
+        "value": ""
+
+        },
+
+        "API_HASH": {
+
+        "description": "Get this value from https://my.telegram.org",
+
+        "value": ""
+
+        },
+        "OWNER_ID": {
+            "description": "Get ur Id Of Telegram nd Paste Here.",
+            "value": "",
+            "required": false
+        }
+    }
+}
