@@ -143,23 +143,25 @@ async def echo(update):
             update.message.chat_id,
             file=file_loc2,
             caption=f"`{name}` \n\n **Size:** `{size_of_file}`",
-            reply_to=update.message,
+            reply_to=update2.message,
             force_document=True,
             supports_streaming=False
           )
         except Exception as e:
           print(e)
-          await msg5.edit(f"Uploading Failed\n\n**Error:** {e}")
+          await update.respond(f"Uploading Failed\n\n**Error:** {e}")
+        
+        await msg5.delete()
+        msg6 = await update.respond(f"Uploading to transfer.sh... \n\n **Name: ** `{name}`")
         try:
-            await msg5.edit(f"Uploading to transfer.sh... \n\n **Name: ** `{name}`")
             download_link, final_date, size = await send_to_transfersh_async(file_loc2, msg5)
-            await update.respond(f"Successfully Uploaded to Transfer.sh! \n\n **Name: ** `{name}` \n **Size:** `{size}` \n **Link:** \n {download_link} \n **ExpireDate:** {final_date}")
+            await msg6.edit(f"Successfully Uploaded to Transfer.sh! \n\n **Name: ** `{name}` \n **Size:** `{size}` \n **Link:** \n {download_link} \n **ExpireDate:** {final_date}")
         except Exception as e:
             print(e)
-            await msg5.edit(f"Uploading to transfer.sh Failed \n\n **Error:** {e}")  
+            await update.respond(f"Uploading to transfer.sh Failed \n\n **Error:** {e}")  
         finally:
            """ Cleaning Section """
-           await msg5.delete()
+           #await msg5.delete()
            await update.respond(f"Send /encode to start new Encoding")
            os.remove(file_path)
            os.remove(file_loc2)
