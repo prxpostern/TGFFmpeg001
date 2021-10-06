@@ -1,6 +1,6 @@
 {
-    "name": "CmprBot001",
-    "description": "320p and audio ripper",
+    "name": "FFMPEG_For_Telegram",
+    "description": "Simple FFmpeg Bot",
     "repository": "https://github.com/prxpostern/MultiVideoCompressor001",
     "success_url": "https://t.me/ali110ali",
     "stack": "container",
