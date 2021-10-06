@@ -27,11 +27,6 @@
 
         "value": ""
 
-        },
-        "OWNER_ID": {
-            "description": "Get ur Id Of Telegram nd Paste Here.",
-            "value": "",
-            "required": false
         }
     }
 }
