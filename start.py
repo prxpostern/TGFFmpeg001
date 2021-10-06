@@ -155,7 +155,7 @@ async def echo(update):
         msg6 = await update.respond(f"Uploading to transfer.sh... \n\n **Name: ** `{name}`")
         try:
             download_link, final_date, size = await send_to_transfersh_async(file_loc2, msg5)
-            await msg6.edit(f"Successfully Uploaded to Transfer.sh! \n\n **Name: ** `{name}` \n **Size:** `{size}` \n **Link:** \n {download_link} \n **ExpireDate:** {final_date}")
+            await msg6.edit(f"Successfully Uploaded to Transfer.sh! \n\n **Name: ** `{name}` \n\n **Size:** `{size}` \n\n **Link:** \n {download_link} \n **ExpireDate:** {final_date}")
         except Exception as e:
             print(e)
             await update.respond(f"Uploading to transfer.sh Failed \n\n **Error:** {e}")  
