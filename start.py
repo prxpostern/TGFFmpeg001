@@ -49,7 +49,7 @@ mp4 + aac resolution 720*576
 @bot.on(events.NewMessage(pattern='/start'))
 async def start(event):
     """Send a message when the command /start is issued."""
-    await event.respond(f"Hi! see /help \n\n Send /encode . Follow the Steps")
+    await event.respond(f"Hi! Send /encode To Start.\n\nFor more info see /help")
     raise events.StopPropagation
     
 @bot.on(events.NewMessage(pattern='/help'))
@@ -90,7 +90,7 @@ async def echo(update):
         
         """ User Input Section """
         await msg2.edit(f"Successfully Downloaded to : `{file_path}`")
-        msg3 = await update2.reply("**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `new.mp3` \n `32k.aac` \n `_.mka` \n\n To Cancel press /cancel")
+        msg3 = await update2.reply("**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.mka` \n\n To Cancel press /cancel")
         async with bot.conversation(update.message.chat_id) as cv:
           ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
         if ext1.text == "/cancel":
@@ -139,6 +139,7 @@ async def echo(update):
         """Uploading Section."""
         await msg5.edit(f"Uploading to Telegram ... \n\n **Name: **`{name}`\n\n**Size:** {size_of_file}")
         try:
+          start = time.time()
           await bot.send_file(
             update.message.chat_id,
             file=file_loc2,
@@ -151,7 +152,7 @@ async def echo(update):
               progress(
                 d,
                 t,
-                msg2,
+                msg5,
                 start
               )
             )
@@ -161,10 +162,10 @@ async def echo(update):
           await update.respond(f"Uploading Failed\n\n**Error:** {e}")
         
         await msg5.delete()
-        msg6 = await update.respond(f"Uploading to transfer.sh... \n\n **Name: ** `{name}`\n\n**Size:** {size_of_file}")
+        msg6 = await update.respond(f"Uploading to `transfer.sh`... \n\n**Name: **`{name}`\n\n**Size:** {size_of_file}")
         try:
             download_link, final_date, size = await send_to_transfersh_async(file_loc2, msg5)
-            await msg6.edit(f"Successfully Uploaded to Transfer.sh! \n\n **Name: ** `{name}` \n\n **Size:** `{size}` \n\n **Link:** \n {download_link} \n **ExpireDate:** {final_date}")
+            await msg6.edit(f"Successfully Uploaded to `Transfer.sh` !\n\n**Name: **`{name}`\n\n**Size:** {size}\n\n[Link]({download_link}): `{download_link}` \n **ExpireDate:** {final_date}")
         except Exception as e:
             print(e)
             await update.respond(f"Uploading to transfer.sh Failed \n\n **Error:** {e}")  
