@@ -23,6 +23,25 @@ File Size:** {get_size(total)}
 
         await event.edit(progress_str)
 
+async def progressb(current, total, event, start):
+    """Generic progress_callback for both
+    upload.py and download.py"""
+    now = time.time()
+    diff = now - start
+    if round(diff % 1.00) == 0 or current == total:
+        percentage = current * 100 / total
+        speed = current / diff
+        elapsed_time = round(diff) * 1000
+        time_to_completion = round((total - current) / speed) * 1000
+        estimated_total_time = elapsed_time + time_to_completion
+        
+        progress_str = f"""**Uploading to `transfer.sh`... : {"%.2f" % (percentage)}%
+File Size:** {get_size(total)}
+**Uploaded:** {get_size(current)}
+**ETA: **{time_formatter(estimated_total_time)}"""
+
+        await event.edit(progress_str)
+
 def get_date_in_two_weeks():
     """
     get maximum date of storage for file
