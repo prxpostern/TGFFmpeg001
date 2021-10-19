@@ -1,9 +1,7 @@
 import aiohttp
 import os
 import time
-from telethon import Button, custom, events
-
-
+#from telethon import Button, custom, events
 
 def get_size(size):
     units = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"]
@@ -49,7 +47,7 @@ async def download_coroutine(session, url, file_name, event, start, bot):
         if "text" in content_type and total_length < 500:
             return await response.release()
         await event.edit(
-            """**Initiating Download**
+            """**Download Status**
 **URL:** {}
 **File Name:** {}
 **File Size:** {}""".format(
@@ -78,7 +76,7 @@ async def download_coroutine(session, url, file_name, event, start, bot):
                     try:
                         if total_length < downloaded:
                             total_length = downloaded
-                        current_message = """Downloading : {}%
+                        current_message = """Download Status : {}%
 URL: {}
 File Name: {}
 File Size: {}
