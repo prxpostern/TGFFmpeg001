@@ -67,10 +67,10 @@ async def echo(update):
         
     if update2.text == "/cancel":
       await msg1.delete()
-      await update.respond(f"Operation Cancelled By User. \n Send /encode to start again!")
+      await update.respond(f"Operation Cancelled By User. \n Send /encode to Start Again!")
       return
     await msg1.delete()
-    msg2 = await update.respond("Downloading...")
+    msg2 = await update.respond("**Initiating Download...**")
     try:
         """Downloading Section."""
         if not os.path.isdir(download_path):
@@ -78,7 +78,7 @@ async def echo(update):
             
         start = time.time()
         if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
-            await msg2.edit("**Downloading starting😉...**")
+            await msg2.edit("**Downloading Media File ...**")
             file_path = await bot.download_media(update2.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
                 progress(d, t, msg2, start)))
         else:
@@ -90,14 +90,14 @@ async def echo(update):
         
         """ User Input Section """
         await msg2.edit(f"Successfully Downloaded to : `{file_path}`")
-        msg3 = await update2.reply("**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.mka` \n\n To Cancel press /cancel")
+        msg3 = await update2.reply("**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.m4a` \n\n To Cancel press /cancel")
         async with bot.conversation(update.message.chat_id) as cv:
           ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
         if ext1.text == "/cancel":
           await msg2.delete()
           await msg3.delete()
           os.remove(file_path)
-          await update.respond(f"Operation Cancelled By User. \n Send /encode to start again!")
+          await update.respond(f"Operation Cancelled By User. \n Send /encode to Start Again!")
           return
         await msg2.delete()
         await msg3.delete()
@@ -109,7 +109,7 @@ async def echo(update):
           if ffcmd1.text == "/cancel":
             await msg4.delete()
             os.remove(file_path)
-            await update.respond(f"Operation Cancelled By User. \n Send /encode to start again!")
+            await update.respond(f"Operation Cancelled By User. \n Send /encode to Start Again!")
             return
         await msg4.delete()  
             
@@ -120,7 +120,7 @@ async def echo(update):
         file_loc2 = f"{ponlyname}{ext2}"
         name = os.path.basename(file_loc2)
         ffcmd4 = f"ffmpeg -i {file_path} {ffcmd2} {file_loc2} -y"
-        msg5 = await ffcmd1.reply(f"`{ffcmd4}` \n\n Encoding ... \n\n **plz wait😍...**")
+        msg5 = await ffcmd1.reply(f"`{ffcmd4}` \n\n Encoding ... \n\n **PLZ Wait 😍 ...**")
         await asyncio.sleep(1)
         
         out, err, rcode, pid = await execute(f"{ffcmd4}")
@@ -137,12 +137,12 @@ async def echo(update):
         size_of_file = get_size(size)
         
         """Uploading Section."""
-        await msg5.edit(f"Uploading to Telegram ... \n\n **Name: **`{name}`\n\n**Size:** {size_of_file}")
         try:
+          await msg5.edit(f"Uploading to Telegram ... \n\n **Name: **`{name}`[{size_of_file}]")
           start = time.time()
           await bot.send_file(
             update.message.chat_id,
-            file=file_loc2,
+            file=str(file_loc2),
             caption=f"`{name}`\n\n**Size:** {size_of_file}",
             reply_to=update2.message,
             force_document=True,
@@ -159,27 +159,28 @@ async def echo(update):
           )
         except Exception as e:
           print(e)
-          await update.respond(f"Uploading Failed\n\n**Error:** {e}")
+          await update.respond(f"Uploading To Telegram Failed\n\n**Error:**\n{e}")
         
         await msg5.delete()
-        msg6 = await update.respond(f"Uploading to `transfer.sh`... \n\n**Name: **`{name}`\n\n**Size:** {size_of_file}")
+        
         try:
-            download_link, final_date, size = await send_to_transfersh_async(file_loc2, msg5)
-            await msg6.edit(f"Successfully Uploaded to `Transfer.sh` !\n\n**Name: **`{name}`\n\n**Size:** {size}\n\n**Link:** `{download_link}` \n **ExpireDate:** {final_date}")
+          msg6 = await update.respond(f"Uploading to `transfer.sh`... \n\n**Name: **`{name}`\n\n**Size:** {size_of_file}")
+          download_link, final_date, size = await send_to_transfersh_async(file_loc2, msg6)
+          await msg6.edit(f"Successfully Uploaded to `Transfer.sh` !\n\n**Name: **`{name}`\n\n**Size:** {size}\n\n**Link:** `{download_link}` \n **ExpireDate:** {final_date}")
         except Exception as e:
-            print(e)
-            await update.respond(f"Uploading to transfer.sh Failed \n\n **Error:** {e}")  
+          print(e)
+          await update.respond(f"Uploading to `TRANSFER.SH` Failed \n\n **Error:** {e}")  
         finally:
-           """ Cleaning Section """
-           #await msg5.delete()
-           await update.respond(f"Send /encode to start new Encoding")
-           os.remove(file_path)
-           os.remove(file_loc2)
-           print("Deleted file :", file_path)
-           print("Deleted file :", file_loc2)
+          """ Cleaning Section """
+          #await msg5.delete()
+          await update.respond(f"Send /encode to Start New Encoding")
+          os.remove(file_path)
+          os.remove(file_loc2)
+          print("Deleted file :", file_path)
+          print("Deleted file :", file_loc2)
     except Exception as e:
         print(e)
-        await update.respond(f"Download link is invalid or not accessible ! \n\n **Error:** {e}")
+        await update.respond(f"Download Link is Invalid or Not Accessible ! \n\n **Error:** {e}")
 
 def main():
     """Start the bot."""
