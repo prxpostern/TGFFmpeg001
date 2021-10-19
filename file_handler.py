@@ -16,7 +16,7 @@ async def progress(current, total, event, start):
         time_to_completion = round((total - current) / speed) * 1000
         estimated_total_time = elapsed_time + time_to_completion
         
-        progress_str = f"""**Downloading : {"%.2f" % (percentage)}%
+        progress_str = f"""**Download Status : {"%.2f" % (percentage)}%
 File Size:** {get_size(total)}
 **Downloaded:** {get_size(current)}
 **ETA: **{time_formatter(estimated_total_time)}"""
@@ -35,7 +35,7 @@ async def progressb(current, total, event, start):
         time_to_completion = round((total - current) / speed) * 1000
         estimated_total_time = elapsed_time + time_to_completion
         
-        progress_str = f"""**Uploading to `transfer.sh`... : {"%.2f" % (percentage)}%
+        progress_str = f"""**Uploading to Telegram Status : {"%.2f" % (percentage)}%
 File Size:** {get_size(total)}
 **Uploaded:** {get_size(current)}
 **ETA: **{time_formatter(estimated_total_time)}"""
