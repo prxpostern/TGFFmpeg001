@@ -119,7 +119,7 @@ async def echo(update):
         ponlyname = os.path.splitext(file_path)[0]
         file_loc2 = f"{ponlyname}{ext2}"
         name = os.path.basename(file_loc2)
-        ffcmd4 = f"ffmpeg -i {file_path} {ffcmd2} {file_loc2} -y"
+        ffcmd4 = f"ffmpeg -i \"{file_path}\" {ffcmd2} \"{file_loc2}\" -y"
         msg5 = await ffcmd1.reply(f"`{ffcmd4}` \n\n Encoding ... \n\n **PLZ Wait 😍 ...**")
         await asyncio.sleep(1)
         
