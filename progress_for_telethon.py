@@ -1,31 +1,33 @@
 import asyncio
-import glob
-import inspect
-import io
-import json
-import math
-import os
-import re
-import shutil
-import subprocess
-import sys
 import time
-import traceback
-from datetime import datetime as dt
-from logging import DEBUG, INFO, basicConfig, getLogger, warning
-from pathlib import Path
+import math
 
-import requests
-import telethon.utils
-from decouple import config
-from html_telegraph_poster import TelegraphPoster
-from telethon import Button, TelegramClient, errors, events, functions, types
-from telethon.sessions import StringSession
-from telethon.tl.functions.messages import ExportChatInviteRequest as cl
-from telethon.tl.functions.users import GetFullUserRequest
-from telethon.utils import get_display_name
+def ts(milliseconds: int) -> str:
+    seconds, milliseconds = divmod(int(milliseconds), 1000)
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
+    tmp = (
+        ((str(days) + "d, ") if days else "")
+        + ((str(hours) + "h, ") if hours else "")
+        + ((str(minutes) + "m, ") if minutes else "")
+        + ((str(seconds) + "s, ") if seconds else "")
+        + ((str(milliseconds) + "ms, ") if milliseconds else "")
+    )
+    return tmp[:-2]
 
-async def progress(current, total, event, start, type_of_ps, file=None):
+def hbs(size):
+    if not size:
+        return ""
+    power = 2 ** 10
+    raised_to_pow = 0
+    dict_power_n = {0: "B", 1: "K", 2: "M", 3: "G", 4: "T", 5: "P"}
+    while size > power:
+        size /= power
+        raised_to_pow += 1
+    return str(round(size, 2)) + " " + dict_power_n[raised_to_pow] + "B"
+
+async def progress2(current, total, event, start, type_of_ps, file=None):
     now = time.time()
     diff = now - start
     if round(diff % 10.00) == 0 or current == total:
@@ -52,4 +54,3 @@ async def progress(current, total, event, start, type_of_ps, file=None):
             )
         else:
             await event.edit("`✦ {}`\n\n{}".format(type_of_ps, tmp))
-
