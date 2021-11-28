@@ -66,8 +66,8 @@ async def help(event):
 
 @bot.on(events.NewMessage(pattern='/encode'))
 async def echo(update):
-  
-    if update.message.from_user.id not in AUTH_USERS:
+    user = await update.get_chat()
+    if user.id not in AUTH_USERS:
       await update.reply("sorry ! you cant use this bot.\n\ndeploy your own bot:\n[Repository_Link](https://github.com/prxpostern/URLtoTG001)")
       return
 
