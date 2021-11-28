@@ -67,7 +67,7 @@ async def echo(update):
         update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
     except Exception as e:
       print(e)
-      await update.respond(f"**Conversation Error:**\n\n{e}")
+      await update.respond(f"**Conversation 1 Error:**\n\n{e}")
       return
     
     if update2.text == "/cancel":
@@ -110,8 +110,17 @@ async def echo(update):
     await msg2.edit(f"✅ Successfully Downloaded to : `{file_path}`")
     msg3 = await update2.reply(f"**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.m4a` \n\nTo Cancel press /cancel")
     
-    async with bot.conversation(update.message.chat_id) as cv:
-      ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+    try:
+      async with bot.conversation(update.message.chat_id) as cv:
+        ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+    except Exception as e:
+      print(e)
+      await update.respond(f"**Conversation 2 Error:**\n\n{e}")
+      try:
+        os.remove(file_path)
+      except:
+        pass
+      return
     
     if ext1.text == "/cancel":
       await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
@@ -130,8 +139,17 @@ async def echo(update):
       f"**Step3:** Enter FFmpeg Options: \n\n `-sn -vn -c:a copy` \n\n `-ar 48000 -ab 256k -f mp3` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k -f mp4` \n\nTo Cancel press /cancel"
     )
 
-    async with bot.conversation(update.message.chat_id) as cv:
-      ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+    try:
+      async with bot.conversation(update.message.chat_id) as cv:
+        ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+    except Exception as e:
+      print(e)
+      await update.respond(f"**Conversation 3 Error:**\n\n{e}")
+      try:
+        os.remove(file_path)
+      except:
+        pass
+      return
     
     if ffcmd1.text == "/cancel":
       await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
