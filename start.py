@@ -82,7 +82,12 @@ async def echo(update):
         progress2(d, t, msg2, start, "⬇️ Downloading Status:")))
     else:
       url = update2.text
+      url = url.strip()
       filename = os.path.join(download_path, os.path.basename(url))
+      filename = filename.replace('%25','_')
+      filename = filename.replace(' ','_')
+      filename = filename.replace('%40','@')
+      
       start = time.time()
       try:
         file_path = await download_file(update2.text, filename, msg2, start, bot)
