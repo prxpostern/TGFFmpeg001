@@ -62,13 +62,19 @@ async def help(event):
 async def echo(update):
   
     msg1 = await update.respond(f"**Step1:** Send Your Media File or URL. \n\n To Cancel press /cancel")
-    async with bot.conversation(update.message.chat_id) as cv:
+    try:
+      async with bot.conversation(update.message.chat_id) as cv:
         update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
-        
+    except Exception as e:
+      print(e)
+      await update.respond(f"**Conversation Error:**\n\n{e}")
+      return
+    
     if update2.text == "/cancel":
       await msg1.delete()
       await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
       return
+    
     await msg1.delete()
     msg2 = await update.respond(f"`Processing ...`")
     
