@@ -12,6 +12,7 @@ from tools import execute
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from thumbnail_video import thumb_creator
+from telethon.tl.types import DocumentAttributeVideo, DocumentAttributeAudio
 
 api_id = int(os.environ.get("API_ID"))
 api_hash = os.environ.get("API_HASH")
