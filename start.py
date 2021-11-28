@@ -68,7 +68,7 @@ async def help(event):
 async def echo(update):
     user = await update.get_chat()
     if user.id not in AUTH_USERS:
-      await update.reply("sorry ! you cant use this bot.\n\ndeploy your own bot:\n[Repository_Link](https://github.com/prxpostern/URLtoTG001)")
+      await update.reply("sorry ! you cant use this bot.\n\ndeploy your own bot:\n[Repository_Link](https://github.com/prxpostern/TGFFmpeg001)")
       return
 
     msg1 = await update.respond(f"**Step1:** Send Your Media File or URL. \n\n To Cancel press /cancel")
