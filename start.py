@@ -188,7 +188,7 @@ async def echo(update):
       return
     
     video_type = ['.mp4','.mkv','.avi','.webm','.wmv','.mov']
-    vcheck = os.splitext(file_loc2)[1]
+    vcheck = os.path.splitext(file_loc2)[1]
     if vcheck in video_type:
       sw = "vid"
       thumbnail = await thumb_creator(file_loc2)
