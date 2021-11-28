@@ -17,6 +17,8 @@ from telethon.tl.types import DocumentAttributeVideo, DocumentAttributeAudio
 api_id = int(os.environ.get("API_ID"))
 api_hash = os.environ.get("API_HASH")
 bot_token =os.environ.get("BOT_TOKEN")
+# Array to store users who are authorized to use the bot
+AUTH_USERS = set(int(x) for x in os.environ.get("AUTH_USERS", "").split())
                           
 download_path = "Downloads/"
 
@@ -65,6 +67,10 @@ async def help(event):
 @bot.on(events.NewMessage(pattern='/encode'))
 async def echo(update):
   
+    if update.message.from_user.id not in AUTH_USERS:
+      await update.reply("sorry ! you cant use this bot.\n\ndeploy your own bot:\n[Repository_Link](https://github.com/prxpostern/URLtoTG001)")
+      return
+
     msg1 = await update.respond(f"**Step1:** Send Your Media File or URL. \n\n To Cancel press /cancel")
     try:
       async with bot.conversation(update.message.chat_id) as cv:
@@ -191,15 +197,15 @@ async def echo(update):
     video_type = ['.mp4','.mkv','.avi','.webm','.wmv','.mov']
     vcheck = os.path.splitext(file_loc2)[1]
     if vcheck in video_type:
-      sw = "vid"
       thumbnail = await thumb_creator(file_loc2)
+      thumbnail = str(thumbnail)
       metadata = extractMetadata(createParser(file_loc2))
       if metadata:
         duration = metadata.get("duration").seconds
         width = metadata.get("width")
         height = metadata.get("height")
     else:
-      sw = "aud"
+      thumbnail = None
       metadata = extractMetadata(createParser(file_loc2))
       if metadata:
         duration = metadata.get("duration").seconds
@@ -207,62 +213,34 @@ async def echo(update):
     size = os.path.getsize(file_loc2)
     size_of_file = get_size(size)
     await msg5.edit(f"⬆️ Uploading to Telegram ... \n\n **Name: **`{name}`[{size_of_file}]")
-    
-    
-    if sw =="vid":
-      start = time.time()
+
+    start = time.time()
+    try:
+      await bot.send_file(
+        update.message.chat_id,
+        file=str(file_loc2),
+        #attributes=DocumentAttributeVideo(duration=duration , w=width, h=height, supports_streaming=True),
+        thumb=thumbnail,
+        caption=f"`{name}`\n\n**Size:** {size_of_file}",
+        reply_to=update2.message,
+        force_document=False,
+        supports_streaming=True,
+        progress_callback=lambda d, t: asyncio.get_event_loop().create_task(progress2(d, t, msg5, start, "⬆️ Uploading Status:", file=str(file_loc2)))
+      )
+    except Exception as e:
+      print(e)
+      await update.respond(f"❌ Uploading To Telegram Failed\n\n**Error:**\n{e}")
+    finally:
+      await msg5.delete()
+      await update.respond(f"Send /encode to Start New Encoding")
       try:
-        await bot.send_file(
-          update.message.chat_id,
-          file=str(file_loc2),
-          #attributes=DocumentAttributeVideo(duration=duration , w=width, h=height, supports_streaming=True),
-          thumb=str(thumbnail),
-          caption=f"`{name}`\n\n**Size:** {size_of_file}",
-          reply_to=update2.message,
-          force_document=False,
-          supports_streaming=True,
-          progress_callback=lambda d, t: asyncio.get_event_loop().create_task(progress2(d, t, msg5, start, "⬆️ Uploading Status:", file=str(file_loc2)))
-        )
-      except Exception as e:
-        print(e)
-        await update.respond(f"❌ Uploading To Telegram Failed\n\n**Error:**\n{e}")
-      finally:
-        await msg5.delete()
-        await update.respond(f"Send /encode to Start New Encoding")
-        try:
-          print("Deleted file :", file_path)
-          os.remove(file_path)
-          print("Deleted file :", file_loc2)
-          os.remove(file_loc2)
-        except:
-          pass
-    else:
-      start = time.time()
-      try:
-        await bot.send_file(
-          update.message.chat_id,
-          file=str(file_loc2),
-          thumb=None,
-          #attributes=DocumentAttributeAudio(duration=duration, title="untitled", performer="unknown artists"),
-          caption=f"`{name}`\n\n**Size:** {size_of_file}",
-          reply_to=update2.message,
-          force_document=False,
-          supports_streaming=True,
-          progress_callback=lambda d, t: asyncio.get_event_loop().create_task(progress2(d, t, msg5, start, "⬆️ Uploading Status:", file=str(file_loc2)))
-        )
-      except Exception as e:
-        print(e)
-        await update.respond(f"❌ Uploading To Telegram Failed\n\n**Error:**\n{e}")
-      finally:
-        await msg5.delete()
-        await update.respond(f"Send /encode to Start New Encoding")
-        try:
-          print("Deleted file :", file_path)
-          os.remove(file_path)
-          print("Deleted file :", file_loc2)
-          os.remove(file_loc2)
-        except:
-          pass
+        print("Deleted file :", file_path)
+        os.remove(file_path)
+        print("Deleted file :", file_loc2)
+        os.remove(file_loc2)
+      except:
+        pass
+    
     
 #try:
 #msg6 = await update.respond(f"⬆️ Uploading to `transfer.sh`... \n\n**Name: **`{name}`\n\n**Size:** {size_of_file}")
