@@ -193,14 +193,21 @@ async def echo(update):
     if vcheck in video_type:
       sw = "vid"
       thumbnail = await thumb_creator(file_loc2)
+      metadata = extractMetadata(createParser(file_loc2))
+      if metadata:
+        duration = metadata.get("duration").seconds
+        width = metadata.get("width")
+        height = metadata.get("height")
     else:
       sw = "aud"
+      metadata = extractMetadata(createParser(file_loc2))
+      if metadata:
+        duration = metadata.get("duration").seconds
     
     size = os.path.getsize(file_loc2)
     size_of_file = get_size(size)
     await msg5.edit(f"⬆️ Uploading to Telegram ... \n\n **Name: **`{name}`[{size_of_file}]")
     
-    metadata = extractMetadata(createParser(file_loc2))
     
     if sw =="vid":
       start = time.time()
@@ -208,13 +215,7 @@ async def echo(update):
         await bot.send_file(
           update.message.chat_id,
           file=str(file_loc2),
-          attributes=(
-            DocumentAttributeVideo(
-              (0, metadata.get('duration').seconds)[metadata.has('duration')],
-              (0, metadata.get('width'))[metadata.has('width')],
-              (0, metadata.get('height'))[metadata.has('height')]
-            )
-          ),
+          attributes=(DocumentAttributeVideo(duration, width, height)),
           thumb=str(thumbnail),
           caption=f"`{name}`\n\n**Size:** {size_of_file}",
           reply_to=update2.message,
@@ -241,13 +242,7 @@ async def echo(update):
         await bot.send_file(
           update.message.chat_id,
           file=str(file_loc2),
-          attributes=(
-            DocumentAttributeAudio(
-              (0, metadata.get('duration').seconds)[metadata.has('duration')],
-              ("untitled", metadata.get('title'))[metadata.has('title')],
-              ("unknown artists", metadata.get('performer'))[metadata.has('performer')]
-            )
-          ),
+          attributes=(DocumentAttributeAudio(duration, "untitled", "unknown artists")),
           caption=f"`{name}`\n\n**Size:** {size_of_file}",
           reply_to=update2.message,
           force_document=False,
