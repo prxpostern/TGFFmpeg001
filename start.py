@@ -9,6 +9,9 @@ import datetime
 import aiohttp
 import asyncio
 from tools import execute
+from hachoir.metadata import extractMetadata
+from hachoir.parser import createParser
+from thumbnail_video import thumb_creator
 
 api_id = int(os.environ.get("API_ID"))
 api_hash = os.environ.get("API_HASH")
@@ -183,20 +186,35 @@ async def echo(update):
       except:
         pass        
       return
-        
+    
+    video_type = ['.mp4','.mkv','.avi','.webm','.wmv','.mov']
+    vcheck = os.splitext(file_loc2)[1]
+    if vcheck in video_type:
+      sw = "vid"
+    else:
+      sw = "aud"
+    
     size = os.path.getsize(file_loc2)
     size_of_file = get_size(size)
     await msg5.edit(f"⬆️ Uploading to Telegram ... \n\n **Name: **`{name}`[{size_of_file}]")
     
+    metadata = extractMetadata(createParser(file_loc2))
     start = time.time()
     try:
       await bot.send_file(
         update.message.chat_id,
         file=str(file_loc2),
+        attributes=(
+          DocumentAttributeVideo(
+            (0, metadata.get('duration').seconds)[metadata.has('duration')],
+            (0, metadata.get('width'))[metadata.has('width')],
+            (0, metadata.get('height'))[metadata.has('height')]
+          )
+        ),
         caption=f"`{name}`\n\n**Size:** {size_of_file}",
         reply_to=update2.message,
-        force_document=True,
-        supports_streaming=False,
+        force_document=False,
+        supports_streaming=True,
         progress_callback=lambda d, t: asyncio.get_event_loop().create_task(progress2(d, t, msg5, start, "⬆️ Uploading Status:", file=str(file_loc2)))
       )
     except Exception as e:
