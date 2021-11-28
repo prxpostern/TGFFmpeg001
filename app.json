@@ -27,6 +27,13 @@
 
         "value": ""
 
+        },
+        "AUTH_USERS": {
+
+        "description": "Id of users that can use the bot, from @MissRose_bot by /id command",
+
+        "value": ""
+
         }
     }
 }
