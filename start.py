@@ -194,6 +194,12 @@ async def echo(update):
         pass        
       return
     
+    try:
+      print("Deleted file :", file_path)
+      os.remove(file_path)
+    except:
+      pass  
+    
     video_type = ['.mp4','.mkv','.avi','.webm','.wmv','.mov']
     vcheck = os.path.splitext(file_loc2)[1]
     if vcheck in video_type:
@@ -234,8 +240,6 @@ async def echo(update):
       await msg5.delete()
       await update.respond(f"Send /encode to Start New Encoding")
       try:
-        print("Deleted file :", file_path)
-        os.remove(file_path)
         print("Deleted file :", file_loc2)
         os.remove(file_loc2)
       except:
