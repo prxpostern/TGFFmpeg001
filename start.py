@@ -234,6 +234,39 @@ async def echo(update):
           os.remove(file_loc2)
         except:
           pass
+    else:
+      start = time.time()
+      try:
+        await bot.send_file(
+          update.message.chat_id,
+          file=str(file_loc2),
+          attributes=(
+            DocumentAttributeAudio(
+              (0, metadata.get('duration').seconds)[metadata.has('duration')],
+              ("untitled", metadata.get('title'))[metadata.has('title')],
+              ("unknown artists", metadata.get('performer'))[metadata.has('performer')]
+            )
+          ),
+          caption=f"`{name}`\n\n**Size:** {size_of_file}",
+          reply_to=update2.message,
+          force_document=False,
+          supports_streaming=True,
+          progress_callback=lambda d, t: asyncio.get_event_loop().create_task(progress2(d, t, msg5, start, "⬆️ Uploading Status:", file=str(file_loc2)))
+        )
+      except Exception as e:
+        print(e)
+        await update.respond(f"❌ Uploading To Telegram Failed\n\n**Error:**\n{e}")
+      finally:
+        await msg5.delete()
+        await update.respond(f"Send /encode to Start New Encoding")
+        try:
+          print("Deleted file :", file_path)
+          os.remove(file_path)
+          print("Deleted file :", file_loc2)
+          os.remove(file_loc2)
+        except:
+          pass
+    
 #try:
 #msg6 = await update.respond(f"⬆️ Uploading to `transfer.sh`... \n\n**Name: **`{name}`\n\n**Size:** {size_of_file}")
 #download_link, final_date, size = await send_to_transfersh_async(file_loc2, msg6)
