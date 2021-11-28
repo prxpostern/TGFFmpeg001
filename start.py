@@ -215,7 +215,7 @@ async def echo(update):
         await bot.send_file(
           update.message.chat_id,
           file=str(file_loc2),
-          attributes=DocumentAttributeVideo(duration, width, height),
+          attributes=DocumentAttributeVideo(duration=duration , w=width, h=height, supports_streaming=True),
           thumb=str(thumbnail),
           caption=f"`{name}`\n\n**Size:** {size_of_file}",
           reply_to=update2.message,
@@ -242,7 +242,7 @@ async def echo(update):
         await bot.send_file(
           update.message.chat_id,
           file=str(file_loc2),
-          attributes=DocumentAttributeAudio(duration, "untitled", "unknown artists"),
+          attributes=DocumentAttributeAudio(duration=duration, title="untitled", performer="unknown artists"),
           caption=f"`{name}`\n\n**Size:** {size_of_file}",
           reply_to=update2.message,
           force_document=False,
