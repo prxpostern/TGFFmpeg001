@@ -242,7 +242,8 @@ async def echo(update):
         await bot.send_file(
           update.message.chat_id,
           file=str(file_loc2),
-          attributes=DocumentAttributeAudio(duration=duration, title="untitled", performer="unknown artists"),
+          thumb=None,
+          #attributes=DocumentAttributeAudio(duration=duration, title="untitled", performer="unknown artists"),
           caption=f"`{name}`\n\n**Size:** {size_of_file}",
           reply_to=update2.message,
           force_document=False,
