@@ -94,26 +94,23 @@ async def echo(update):
         async with bot.conversation(update.message.chat_id) as cv:
             update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
     except Exception as e:
-        print(e)
+        LOGGER.info(f"Conversation 1 Error: {e}")
         await msg1.delete()
         await update.respond(f"**Conversation 1 Error:**\n\n{e}")
         return
     await msg1.delete()
-    #u2 = str(update2)
-    #u2 = json.loads(u2)
-    LOGGER.info(f"{update2}")
+    #LOGGER.info(f"{update2}")
     if update2.text == "/cancel":
         await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
         return
     if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
         url_size = get_size(update2.message.document.size)
-        LOGGER.info(f"{url_size}")
         url_fn_attr = next(filter(lambda x: isinstance(x, DocumentAttributeFilename), update2.message.document.attributes), None)
         url_fn = url_fn_attr.file_name if url_fn_attr else 'Unknown'
         #url_fn = update2.message.document.attributes.file_name
         #url_fn = await update2.get_chat()
         #urlfn = json.loads(url_fn)
-        LOGGER.info(f"{url_fn} - {url_size}")
+        LOGGER.info(f"Source Info: {url_fn} --- {url_size}")
     else:
         if "|" in update2.text:
             url , cfname = update2.text.split("|", 1)
@@ -141,7 +138,7 @@ async def echo(update):
         async with bot.conversation(update.message.chat_id) as cv:
             ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
     except Exception as e:
-        print(e)
+        LOGGER.info(f"Conversation 2 Error: {e}")
         await msg2.delete()
         await update.respond(f"**Conversation 2 Error:**\n\n{e}")
         return
@@ -159,7 +156,7 @@ async def echo(update):
         async with bot.conversation(update.message.chat_id) as cv:
             ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
     except Exception as e:
-        print(e)
+        LOGGER.info(f"Conversation 3 Error: {e}")
         await update.respond(f"**Conversation 3 Error:**\n\n{e}")
         await msg3.delete()
         return
@@ -183,12 +180,14 @@ async def echo(update):
         try:
             file_path = await download_file(url, filename, msg4, start, bot)
         except Exception as e:
-            print(e)
+            LOGGER.info(f"Error: {e}")
             await msg4.delete()
             await update.respond(f"Download Link is Invalid or Not Accessible !\n\n**Error:** {e}")
             try:
                 os.remove(file_path)
-            except:
+                LOGGER.info(f"Deleted: {file_path}")
+            except Exception as e:
+                LOGGER.info(f"Error Deleted: {e}")
                 pass
             return
             
@@ -212,19 +211,20 @@ async def echo(update):
         print(err)
         await msg5.edit(f"**FFmpeg: Error Occured.**\n\n{err}")
         try:
-            print("Deleted file :", file_path)
             os.remove(file_path)
-            print("Deleted file :", file_loc2)
+            LOGGER.info(f"Deleted: {file_path}")
             os.remove(file_loc2)
+            LOGGER.info(f"Deleted: {file_loc2}")
         except:
             pass        
         return
     
     try:
-        print("Deleted file :", file_path)
         os.remove(file_path)
-    except:
-        pass  
+        LOGGER.info(f"Deleted: {file_path}")
+    except Exception as e:
+        LOGGER.info(f"{file_path} Error Deleted: {e}")
+        pass
     
     ########################################################## Upload
     
@@ -261,15 +261,16 @@ async def echo(update):
             progress_callback=lambda d, t: asyncio.get_event_loop().create_task(progress2(d, t, msg5, start, "⬆️ Uploading Status:", file=str(file_loc2)))
         )
     except Exception as e:
-        print(e)
+        LOGGER.info(f"Uploading To Telegram Failed: {e}")
         await update.respond(f"❌ Uploading To Telegram Failed\n\n**Error:**\n{e}")
     finally:
         await msg5.delete()
         await update.respond(f"Send /encode to Start New Encoding")
         try:
-            print("Deleted file :", file_loc2)
             os.remove(file_loc2)
-        except:
+            LOGGER.info(f"Deleted: {file_loc2}")
+        except Exception as e:
+            LOGGER.info(f"{file_loc2} Error Deleted: {e}")
             pass
     
     
