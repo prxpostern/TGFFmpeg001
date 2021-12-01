@@ -108,7 +108,7 @@ async def echo(update):
     if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
         url_size = get_size(update2.message.document.size)
         LOGGER.info(f"{url_size}")
-        url_fn = update2.message.document.attributes
+        url_fn = update2.message.document.attributes.file_name
         #url_fn = await update2.get_chat()
         #urlfn = json.loads(url_fn)
         LOGGER.info(f"{url_fn} - {url_size}")
