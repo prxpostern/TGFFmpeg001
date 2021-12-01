@@ -98,7 +98,7 @@ async def echo(update):
         await update.respond(f"**Conversation 1 Error:**\n\n{e}")
         return
     await msg1.delete()
-    u2 = json.loads(update2)
+    u2 = json.loads(str(update2).decode())
     LOGGER.info(f"{u2}")
     if update2.text == "/cancel":
         await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
