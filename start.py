@@ -1,5 +1,4 @@
-import telethon
-#from telethon import TelegramClient, events, Button
+from telethon import TelegramClient, events, Button
 from download_from_url import download_file, get_size
 from file_handler import send_to_transfersh_async, progress, progressb
 from progress_for_telethon import progress2
