@@ -98,7 +98,8 @@ async def echo(update):
         await update.respond(f"**Conversation 1 Error:**\n\n{e}")
         return
     await msg1.delete()
-    u2 = json.loads(str(update2).decode())
+    u2 = str(update2)
+    u2 = json.loads(u2)
     LOGGER.info(f"{u2}")
     if update2.text == "/cancel":
         await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
@@ -106,8 +107,8 @@ async def echo(update):
     if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
         url_size = get_size(update2.message.document.size)
         url_fn = await update2.get_chat()
-        urlfn = json.loads(url_fn)
-        LOGGER.info(f"{urlfn}")
+        #urlfn = json.loads(url_fn)
+        #LOGGER.info(f"{urlfn}")
     else:
         if "|" in update2.text:
             url , cfname = update2.text.split("|", 1)
