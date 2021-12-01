@@ -16,7 +16,7 @@ from thumbnail_video import thumb_creator
 from telethon.tl.types import DocumentAttributeVideo, DocumentAttributeAudio
 import logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     handlers=[logging.FileHandler('log.txt'), logging.StreamHandler()],
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
