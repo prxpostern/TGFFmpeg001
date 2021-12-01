@@ -106,10 +106,10 @@ async def echo(update):
         return
     if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
         url_size = get_size(update2.message.document.size)
-        url_fn = update2.message.message.media.document.file_name
+        url_fn = update2.message.media.document.file_name
         #url_fn = await update2.get_chat()
         #urlfn = json.loads(url_fn)
-        LOGGER.info(f"{url_fn}")
+        LOGGER.info(f"{url_fn} - {url_size}")
     else:
         if "|" in update2.text:
             url , cfname = update2.text.split("|", 1)
