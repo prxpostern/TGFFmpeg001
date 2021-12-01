@@ -108,7 +108,7 @@ async def echo(update):
     if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
         url_size = get_size(update2.message.document.size)
         LOGGER.info(f"{url_size}")
-        url_fn = update2.message.media.document.attributes
+        url_fn = update2.message.document.attributes
         #url_fn = await update2.get_chat()
         #urlfn = json.loads(url_fn)
         LOGGER.info(f"{url_fn} - {url_size}")
@@ -244,7 +244,7 @@ async def echo(update):
     
     size = os.path.getsize(file_loc2)
     size = get_size(size)
-    await msg5.edit(f"⬆️ Uploading to Telegram ... \n\n **Name: **`{name}`[{size_of_file}]")
+    await msg5.edit(f"⬆️ Uploading to Telegram ...")
 
     start = time.time()
     try:
