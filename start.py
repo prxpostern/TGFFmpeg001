@@ -170,27 +170,9 @@ async def echo(update):
         file_path = await bot.download_media(update2.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
             progress2(d, t, msg4, start, "⬇️ Downloading Status:")))
     else:
-        if "|" in update2.text:
-            url , cfname = update2.text.split("|", 1)
-            cfname = cfname.strip()
-            cfname = cfname.replace('%40','@')
-            filename = os.path.join(download_path, cfname)
-        else:
-            url = update2.text
-            if os.path.splitext(url)[1]:
-                ofn = os.path.basename(url)
-                filename = os.path.join(download_path, os.path.basename(url))
-            else:
-                await update2.reply("No Extension ! Use Custom Filename.")
-                return
-        url = url.strip()
-        filename = filename.replace('%25','_')
-        filename = filename.replace(' ','_')
-        filename = filename.replace('%40','@')
-      
         start = time.time()
         try:
-            file_path = await download_file(update2.text, filename, msg4, start, bot)
+            file_path = await download_file(url, filename, msg4, start, bot)
         except Exception as e:
             print(e)
             await msg4.delete()
