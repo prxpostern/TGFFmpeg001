@@ -8,6 +8,7 @@ import time
 import datetime
 import aiohttp
 import asyncio
+import requests
 from tools import execute
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
@@ -89,10 +90,31 @@ async def echo(update):
     if update2.text == "/cancel":
       await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
       return
-    
+    if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
+      
+    else:
+      if "|" in update2.text:
+        url , cfname = update2.text.split("|", 1)
+        cfname = cfname.strip()
+        filename = os.path.join(download_path, cfname)
+      else:
+        url = update2.text
+        if os.path.splitext(url)[1]:
+            filename = os.path.join(download_path, os.path.basename(url))
+        else:
+            await update2.reply("No Extension ! Use Custom Filename.")
+            return
+      url = url.strip()
+      filename = filename.replace('%25','_')
+      filename = filename.replace(' ','_')
+      filename = filename.replace('%40','@')
+      url_fn = os.path.basename(filename)
+      r = requests.get(url, allow_redirects=True, stream=True)
+      url_size = int(r.headers.get("content-length", 0))
+      url_size = get_size(url_size)
     ########################################################## Step2
 
-    msg2 = await update2.reply(f"**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.m4a` \n\nTo Cancel press /cancel")
+    msg2 = await update2.reply(f"`{url_fn}` [{url_size}]\n\n**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.m4a` \n\nTo Cancel press /cancel")
     try:
       async with bot.conversation(update.message.chat_id) as cv:
         ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
@@ -109,7 +131,7 @@ async def echo(update):
     ########################################################## Step3
 
     msg3 = await ext1.reply(
-      f"**Step3:** Enter FFmpeg Options: \n\n `-sn -vn -c:a copy` \n\n `-ar 48000 -ab 256k -f mp3` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k -f mp4` \n\nTo Cancel press /cancel"
+      f"`{url_fn}` [{url_size}]\n\n**Step3:** Enter FFmpeg Options: \n\n `-sn -vn -c:a copy` \n\n `-ar 48000 -ab 256k -f mp3` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k -f mp4` \n\nTo Cancel press /cancel"
     )
     try:
       async with bot.conversation(update.message.chat_id) as cv:
@@ -220,7 +242,7 @@ async def echo(update):
         duration = metadata.get("duration").seconds
     
     size = os.path.getsize(file_loc2)
-    size_of_file = get_size(size)
+    size = get_size(size)
     await msg5.edit(f"⬆️ Uploading to Telegram ... \n\n **Name: **`{name}`[{size_of_file}]")
 
     start = time.time()
@@ -229,7 +251,7 @@ async def echo(update):
         update.message.chat_id,
         file=str(file_loc2),
         thumb=thumbnail,
-        caption=f"`{name}`\n\n**Size:** {size_of_file}",
+        caption=f"`{name}`\n\n**Size:** {size}",
         reply_to=update2.message,
         force_document=False,
         supports_streaming=True,
