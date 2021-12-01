@@ -1,4 +1,5 @@
-from telethon import TelegramClient, events, Button
+import telethon
+#from telethon import TelegramClient, events, Button
 from download_from_url import download_file, get_size
 from file_handler import send_to_transfersh_async, progress, progressb
 from progress_for_telethon import progress2
@@ -14,6 +15,16 @@ from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from thumbnail_video import thumb_creator
 from telethon.tl.types import DocumentAttributeVideo, DocumentAttributeAudio
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    handlers=[logging.FileHandler('log.txt'), logging.StreamHandler()],
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+#basicConfig(format="[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s", level=INFO)
+#LOGGER = getLogger(__name__)
+#log: logging.Logger = logging.getLogger("FastTelethon")
+logging.getLogger("telethon").setLevel(logging.WARNING)
 
 api_id = int(os.environ.get("API_ID"))
 api_hash = os.environ.get("API_HASH")
@@ -81,6 +92,7 @@ async def echo(update):
     try:
       async with bot.conversation(update.message.chat_id) as cv:
         update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+        
     except Exception as e:
       print(e)
       await msg1.delete()
@@ -91,6 +103,7 @@ async def echo(update):
       await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
       return
     if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
+      url_size = get_size(update2.message.document.size)
       
     else:
       if "|" in update2.text:
