@@ -147,17 +147,17 @@ async def echo(update):
       f"`{url_fn}` [{url_size}]\n\n**Step3:** Enter FFmpeg Options: \n\n `-sn -vn -c:a copy` \n\n `-ar 48000 -ab 256k -f mp3` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k -f mp4` \n\nTo Cancel press /cancel"
     )
     try:
-      async with bot.conversation(update.message.chat_id) as cv:
-        ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+        async with bot.conversation(update.message.chat_id) as cv:
+            ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
     except Exception as e:
-      print(e)
-      await update.respond(f"**Conversation 3 Error:**\n\n{e}")
-      await msg3.delete()
-      return
+        print(e)
+        await update.respond(f"**Conversation 3 Error:**\n\n{e}")
+        await msg3.delete()
+        return
     await msg3.delete()
     if ffcmd1.text == "/cancel":
-      await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
-      return
+        await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
+        return
     
     ########################################################## Download
     
