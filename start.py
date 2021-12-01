@@ -110,7 +110,7 @@ async def echo(update):
         LOGGER.info(f"{url_size}")
         url_fn_attr = next(filter(lambda x: isinstance(x, DocumentAttributeFilename), update2.message.document.attributes), None)
         url_fn = url_fn_attr.file_name if url_fn_attr else 'Unknown'
-        url_fn = update2.message.document.attributes.file_name
+        #url_fn = update2.message.document.attributes.file_name
         #url_fn = await update2.get_chat()
         #urlfn = json.loads(url_fn)
         LOGGER.info(f"{url_fn} - {url_size}")
