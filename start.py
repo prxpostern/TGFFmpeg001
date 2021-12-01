@@ -21,7 +21,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 #basicConfig(format="[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s", level=INFO)
-#LOGGER = getLogger(__name__)
+LOGGER = getLogger(__name__)
 #log: logging.Logger = logging.getLogger("FastTelethon")
 logging.getLogger("telethon").setLevel(logging.WARNING)
 
