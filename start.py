@@ -67,7 +67,7 @@ async def help(event):
 @bot.on(events.NewMessage(pattern='/encode'))
 async def echo(update):
   
-    ########################################################## Check User Authorization
+    ########################################################## Authorization
     
     user = await update.get_chat()
     if user.id not in AUTH_USERS:
@@ -125,28 +125,41 @@ async def echo(update):
       return
     
     ########################################################## Download
+    
     msg4 = await update.respond(f"`Processing ...`")
     if not os.path.isdir(download_path):
       os.mkdir(download_path)
-            
     if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
-      await msg2.edit(f"**⬇️ Trying to Download Media ...**")
+      await msg4.edit(f"**⬇️ Trying to Download Media ...**")
       start = time.time()
       file_path = await bot.download_media(update2.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
-        progress2(d, t, msg2, start, "⬇️ Downloading Status:")))
+        progress2(d, t, msg4, start, "⬇️ Downloading Status:")))
     else:
-      url = update2.text
+      if "|" in update2.text:
+        url , cfname = update2.text.split("|", 1)
+        cfname = cfname.strip()
+        cfname = cfname.replace('%40','@')
+        filename = os.path.join(download_path, cfname)
+      else:
+        url = update2.text
+        if os.path.splitext(url)[1]:
+            ofn = os.path.basename(url)
+            filename = os.path.join(download_path, os.path.basename(url))
+        else:
+            await update2.reply("No Extension ! Use Custom Filename.")
+            return
+      
       url = url.strip()
-      filename = os.path.join(download_path, os.path.basename(url))
       filename = filename.replace('%25','_')
       filename = filename.replace(' ','_')
       filename = filename.replace('%40','@')
       
       start = time.time()
       try:
-        file_path = await download_file(update2.text, filename, msg2, start, bot)
+        file_path = await download_file(update2.text, filename, msg4, start, bot)
       except Exception as e:
         print(e)
+        await msg4.delete()
         await update.respond(f"Download Link is Invalid or Not Accessible !\n\n**Error:** {e}")
         try:
           os.remove(file_path)
@@ -155,14 +168,8 @@ async def echo(update):
         return
             
     print(f"file downloaded to {file_path}")
-    await msg2.edit(f"✅ Successfully Downloaded to : `{file_path}`")
-    
-    else:
-      await msg2.delete()
-      await msg3.delete()
-    
-    
-    
+    await msg4.edit(f"✅ Successfully Downloaded.")
+    await asyncio.sleep(1)
     ext2 = ext1.text
     ffcmd2 = ffcmd1.text
     ponlyname = os.path.splitext(file_path)[0]
@@ -171,6 +178,7 @@ async def echo(update):
     ffcmd4 = f"ffmpeg -i \"{file_path}\" {ffcmd2} \"{file_loc2}\" -y"
     msg5 = await ffcmd1.reply(f"`{ffcmd4}` \n\n Encoding ... \n\n **PLZ Wait 😍 ...**")
     await asyncio.sleep(1)
+    await msg4.delete()
 
     ########################################################## Encode
     
@@ -220,7 +228,6 @@ async def echo(update):
       await bot.send_file(
         update.message.chat_id,
         file=str(file_loc2),
-        #attributes=DocumentAttributeVideo(duration=duration , w=width, h=height, supports_streaming=True),
         thumb=thumbnail,
         caption=f"`{name}`\n\n**Size:** {size_of_file}",
         reply_to=update2.message,
