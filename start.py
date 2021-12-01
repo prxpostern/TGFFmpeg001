@@ -71,12 +71,14 @@ async def echo(update):
       await update.reply("sorry ! you cant use this bot.\n\ndeploy your own bot:\n[Repository_Link](https://github.com/prxpostern/TGFFmpeg001)")
       return
 
+    # Step1
     msg1 = await update.respond(f"**Step1:** Send Your Media File or URL. \n\n To Cancel press /cancel")
     try:
       async with bot.conversation(update.message.chat_id) as cv:
         update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
     except Exception as e:
       print(e)
+      await msg1.delete()
       await update.respond(f"**Conversation 1 Error:**\n\n{e}")
       return
     
@@ -86,7 +88,48 @@ async def echo(update):
       return
     
     await msg1.delete()
-    msg2 = await update.respond(f"`Processing ...`")
+    
+    # Step2
+    msg2 = await update2.reply(f"**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.m4a` \n\nTo Cancel press /cancel")
+    try:
+      async with bot.conversation(update.message.chat_id) as cv:
+        ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+    except Exception as e:
+      print(e)
+      await msg2.delete()
+      await update.respond(f"**Conversation 2 Error:**\n\n{e}")
+      return
+    
+    if ext1.text == "/cancel":
+      await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
+      await msg2.delete()
+      return
+    
+    # Step3
+    msg3 = await ext1.reply(
+      f"**Step3:** Enter FFmpeg Options: \n\n `-sn -vn -c:a copy` \n\n `-ar 48000 -ab 256k -f mp3` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k -f mp4` \n\nTo Cancel press /cancel"
+    )
+    try:
+      async with bot.conversation(update.message.chat_id) as cv:
+        ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+    except Exception as e:
+      print(e)
+      await update.respond(f"**Conversation 3 Error:**\n\n{e}")
+      await msg3.delete()
+      return
+    
+    if ffcmd1.text == "/cancel":
+      await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
+      await msg4.delete()
+      try:
+        os.remove(file_path)
+      except:
+        pass
+      return
+    else:
+      await msg4.delete()
+    
+    #msg2 = await update.respond(f"`Processing ...`")
     
     if not os.path.isdir(download_path):
       os.mkdir(download_path)
@@ -118,59 +161,12 @@ async def echo(update):
             
     print(f"file downloaded to {file_path}")
     await msg2.edit(f"✅ Successfully Downloaded to : `{file_path}`")
-    msg3 = await update2.reply(f"**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.m4a` \n\nTo Cancel press /cancel")
     
-    try:
-      async with bot.conversation(update.message.chat_id) as cv:
-        ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
-    except Exception as e:
-      print(e)
-      await update.respond(f"**Conversation 2 Error:**\n\n{e}")
-      try:
-        os.remove(file_path)
-      except:
-        pass
-      return
-    
-    if ext1.text == "/cancel":
-      await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
-      await msg2.delete()
-      await msg3.delete()
-      try:
-        os.remove(file_path)
-      except:
-        pass
-      return
     else:
       await msg2.delete()
       await msg3.delete()
     
-    msg4 = await ext1.reply(
-      f"**Step3:** Enter FFmpeg Options: \n\n `-sn -vn -c:a copy` \n\n `-ar 48000 -ab 256k -f mp3` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k -f mp4` \n\nTo Cancel press /cancel"
-    )
-
-    try:
-      async with bot.conversation(update.message.chat_id) as cv:
-        ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
-    except Exception as e:
-      print(e)
-      await update.respond(f"**Conversation 3 Error:**\n\n{e}")
-      try:
-        os.remove(file_path)
-      except:
-        pass
-      return
     
-    if ffcmd1.text == "/cancel":
-      await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
-      await msg4.delete()
-      try:
-        os.remove(file_path)
-      except:
-        pass
-      return
-    else:
-      await msg4.delete()
     
     ext2 = ext1.text
     ffcmd2 = ffcmd1.text
