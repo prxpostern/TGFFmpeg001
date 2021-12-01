@@ -78,33 +78,33 @@ async def help(event):
 
 @bot.on(events.NewMessage(pattern='/encode'))
 async def echo(update):
-  
+      
     ########################################################## Authorization
     
     user = await update.get_chat()
     if user.id not in AUTH_USERS:
-      await update.reply("sorry ! you cant use this bot.\n\ndeploy your own bot:\n[Repository_Link](https://github.com/prxpostern/TGFFmpeg001)")
-      return
+        await update.reply("sorry ! you cant use this bot.\n\ndeploy your own bot:\n[Repository_Link](https://github.com/prxpostern/TGFFmpeg001)")
+        return
 
     ########################################################## Step1
     
     msg1 = await update.respond(f"**Step1:** Send Your Media File or URL. \n\n To Cancel press /cancel")
     try:
-      async with bot.conversation(update.message.chat_id) as cv:
-        update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
-        
+        async with bot.conversation(update.message.chat_id) as cv:
+            update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
     except Exception as e:
-      print(e)
-      await msg1.delete()
-      await update.respond(f"**Conversation 1 Error:**\n\n{e}")
-      return
+        print(e)
+        await msg1.delete()
+        await update.respond(f"**Conversation 1 Error:**\n\n{e}")
+        return
     await msg1.delete()
+    LOGGER.info(f"{update2}")
     if update2.text == "/cancel":
-      await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
-      return
+        await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
+        return
     if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
-      url_size = get_size(update2.message.document.size)
-      
+        url_size = get_size(update2.message.document.size)
+        url_fn = await update2.get_chat()
     else:
       if "|" in update2.text:
         url , cfname = update2.text.split("|", 1)
@@ -117,14 +117,15 @@ async def echo(update):
         else:
             await update2.reply("No Extension ! Use Custom Filename.")
             return
-      url = url.strip()
-      filename = filename.replace('%25','_')
-      filename = filename.replace(' ','_')
-      filename = filename.replace('%40','@')
-      url_fn = os.path.basename(filename)
-      r = requests.get(url, allow_redirects=True, stream=True)
-      url_size = int(r.headers.get("content-length", 0))
-      url_size = get_size(url_size)
+    url = url.strip()
+    
+    filename = filename.replace('%25','_')
+    filename = filename.replace(' ','_')
+    filename = filename.replace('%40','@')
+    url_fn = os.path.basename(filename)
+    r = requests.get(url, allow_redirects=True, stream=True)
+    url_size = int(r.headers.get("content-length", 0))
+    url_size = get_size(url_size)
     ########################################################## Step2
 
     msg2 = await update2.reply(f"`{url_fn}` [{url_size}]\n\n**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.m4a` \n\nTo Cancel press /cancel")
