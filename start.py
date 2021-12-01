@@ -163,44 +163,43 @@ async def echo(update):
     
     msg4 = await update.respond(f"`Processing ...`")
     if not os.path.isdir(download_path):
-      os.mkdir(download_path)
+        os.mkdir(download_path)
     if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
-      await msg4.edit(f"**⬇️ Trying to Download Media ...**")
-      start = time.time()
-      file_path = await bot.download_media(update2.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
-        progress2(d, t, msg4, start, "⬇️ Downloading Status:")))
+        await msg4.edit(f"**⬇️ Trying to Download Media ...**")
+        start = time.time()
+        file_path = await bot.download_media(update2.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
+            progress2(d, t, msg4, start, "⬇️ Downloading Status:")))
     else:
-      if "|" in update2.text:
-        url , cfname = update2.text.split("|", 1)
-        cfname = cfname.strip()
-        cfname = cfname.replace('%40','@')
-        filename = os.path.join(download_path, cfname)
-      else:
-        url = update2.text
-        if os.path.splitext(url)[1]:
-            ofn = os.path.basename(url)
-            filename = os.path.join(download_path, os.path.basename(url))
+        if "|" in update2.text:
+            url , cfname = update2.text.split("|", 1)
+            cfname = cfname.strip()
+            cfname = cfname.replace('%40','@')
+            filename = os.path.join(download_path, cfname)
         else:
-            await update2.reply("No Extension ! Use Custom Filename.")
-            return
+            url = update2.text
+            if os.path.splitext(url)[1]:
+                ofn = os.path.basename(url)
+                filename = os.path.join(download_path, os.path.basename(url))
+            else:
+                await update2.reply("No Extension ! Use Custom Filename.")
+                return
+        url = url.strip()
+        filename = filename.replace('%25','_')
+        filename = filename.replace(' ','_')
+        filename = filename.replace('%40','@')
       
-      url = url.strip()
-      filename = filename.replace('%25','_')
-      filename = filename.replace(' ','_')
-      filename = filename.replace('%40','@')
-      
-      start = time.time()
-      try:
-        file_path = await download_file(update2.text, filename, msg4, start, bot)
-      except Exception as e:
-        print(e)
-        await msg4.delete()
-        await update.respond(f"Download Link is Invalid or Not Accessible !\n\n**Error:** {e}")
+        start = time.time()
         try:
-          os.remove(file_path)
-        except:
-          pass
-        return
+            file_path = await download_file(update2.text, filename, msg4, start, bot)
+        except Exception as e:
+            print(e)
+            await msg4.delete()
+            await update.respond(f"Download Link is Invalid or Not Accessible !\n\n**Error:** {e}")
+            try:
+                os.remove(file_path)
+            except:
+                pass
+            return
             
     print(f"file downloaded to {file_path}")
     await msg4.edit(f"✅ Successfully Downloaded.")
@@ -219,40 +218,40 @@ async def echo(update):
     
     out, err, rcode, pid = await execute(f"{ffcmd4}")
     if rcode != 0:
-      print(err)
-      await msg5.edit(f"**FFmpeg: Error Occured.**\n\n{err}")
-      try:
-        print("Deleted file :", file_path)
-        os.remove(file_path)
-        print("Deleted file :", file_loc2)
-        os.remove(file_loc2)
-      except:
-        pass        
-      return
+        print(err)
+        await msg5.edit(f"**FFmpeg: Error Occured.**\n\n{err}")
+        try:
+            print("Deleted file :", file_path)
+            os.remove(file_path)
+            print("Deleted file :", file_loc2)
+            os.remove(file_loc2)
+        except:
+            pass        
+        return
     
     try:
-      print("Deleted file :", file_path)
-      os.remove(file_path)
+        print("Deleted file :", file_path)
+        os.remove(file_path)
     except:
-      pass  
+        pass  
     
     ########################################################## Upload
     
     video_type = ['.mp4','.mkv','.avi','.webm','.wmv','.mov']
     vcheck = os.path.splitext(file_loc2)[1]
     if vcheck in video_type:
-      thumbnail = await thumb_creator(file_loc2)
-      thumbnail = str(thumbnail)
-      metadata = extractMetadata(createParser(file_loc2))
-      if metadata:
-        duration = metadata.get("duration").seconds
-        width = metadata.get("width")
-        height = metadata.get("height")
+        thumbnail = await thumb_creator(file_loc2)
+        thumbnail = str(thumbnail)
+        metadata = extractMetadata(createParser(file_loc2))
+        if metadata:
+            duration = metadata.get("duration").seconds
+            width = metadata.get("width")
+            height = metadata.get("height")
     else:
-      thumbnail = None
-      metadata = extractMetadata(createParser(file_loc2))
-      if metadata:
-        duration = metadata.get("duration").seconds
+        thumbnail = None
+        metadata = extractMetadata(createParser(file_loc2))
+        if metadata:
+            duration = metadata.get("duration").seconds
     
     size = os.path.getsize(file_loc2)
     size = get_size(size)
@@ -260,27 +259,27 @@ async def echo(update):
 
     start = time.time()
     try:
-      await bot.send_file(
-        update.message.chat_id,
-        file=str(file_loc2),
-        thumb=thumbnail,
-        caption=f"`{name}`\n\n**Size:** {size}",
-        reply_to=update2.message,
-        force_document=False,
-        supports_streaming=True,
-        progress_callback=lambda d, t: asyncio.get_event_loop().create_task(progress2(d, t, msg5, start, "⬆️ Uploading Status:", file=str(file_loc2)))
-      )
+        await bot.send_file(
+            update.message.chat_id,
+            file=str(file_loc2),
+            thumb=thumbnail,
+            caption=f"`{name}`\n\n**Size:** {size}",
+            reply_to=update2.message,
+            force_document=False,
+            supports_streaming=True,
+            progress_callback=lambda d, t: asyncio.get_event_loop().create_task(progress2(d, t, msg5, start, "⬆️ Uploading Status:", file=str(file_loc2)))
+        )
     except Exception as e:
-      print(e)
-      await update.respond(f"❌ Uploading To Telegram Failed\n\n**Error:**\n{e}")
+        print(e)
+        await update.respond(f"❌ Uploading To Telegram Failed\n\n**Error:**\n{e}")
     finally:
-      await msg5.delete()
-      await update.respond(f"Send /encode to Start New Encoding")
-      try:
-        print("Deleted file :", file_loc2)
-        os.remove(file_loc2)
-      except:
-        pass
+        await msg5.delete()
+        await update.respond(f"Send /encode to Start New Encoding")
+        try:
+            print("Deleted file :", file_loc2)
+            os.remove(file_loc2)
+        except:
+            pass
     
     
 #try:
