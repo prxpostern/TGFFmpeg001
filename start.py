@@ -81,13 +81,11 @@ async def echo(update):
       await msg1.delete()
       await update.respond(f"**Conversation 1 Error:**\n\n{e}")
       return
-    
+    await msg1.delete()
     if update2.text == "/cancel":
-      await msg1.delete()
       await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
       return
     
-    await msg1.delete()
     
     # Step2
     msg2 = await update2.reply(f"**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.m4a` \n\nTo Cancel press /cancel")
@@ -99,10 +97,9 @@ async def echo(update):
       await msg2.delete()
       await update.respond(f"**Conversation 2 Error:**\n\n{e}")
       return
-    
+    await msg2.delete()
     if ext1.text == "/cancel":
       await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
-      await msg2.delete()
       return
     
     # Step3
@@ -117,17 +114,10 @@ async def echo(update):
       await update.respond(f"**Conversation 3 Error:**\n\n{e}")
       await msg3.delete()
       return
-    
+    await msg3.delete()
     if ffcmd1.text == "/cancel":
       await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
-      await msg4.delete()
-      try:
-        os.remove(file_path)
-      except:
-        pass
       return
-    else:
-      await msg4.delete()
     
     #msg2 = await update.respond(f"`Processing ...`")
     
