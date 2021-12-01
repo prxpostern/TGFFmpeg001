@@ -2,6 +2,7 @@ from telethon import TelegramClient, events, Button
 from download_from_url import download_file, get_size
 from file_handler import send_to_transfersh_async, progress, progressb
 from progress_for_telethon import progress2
+import json
 import cryptg
 import os
 import time
@@ -97,7 +98,8 @@ async def echo(update):
         await update.respond(f"**Conversation 1 Error:**\n\n{e}")
         return
     await msg1.delete()
-    LOGGER.info(f"{update2}")
+    u2 = update2.json()
+    LOGGER.info(f"{u2}")
     if update2.text == "/cancel":
         await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
         return
@@ -116,14 +118,14 @@ async def echo(update):
             else:
                 await update2.reply("No Extension ! Use Custom Filename.")
                 return
-    url = url.strip()
-    filename = filename.replace('%25','_')
-    filename = filename.replace(' ','_')
-    filename = filename.replace('%40','@')
-    url_fn = os.path.basename(filename)
-    r = requests.get(url, allow_redirects=True, stream=True)
-    url_size = int(r.headers.get("content-length", 0))
-    url_size = get_size(url_size)
+        url = url.strip()
+        filename = filename.replace('%25','_')
+        filename = filename.replace(' ','_')
+        filename = filename.replace('%40','@')
+        url_fn = os.path.basename(filename)
+        r = requests.get(url, allow_redirects=True, stream=True)
+        url_size = int(r.headers.get("content-length", 0))
+        url_size = get_size(url_size)
     ########################################################## Step2
 
     msg2 = await update2.reply(f"`{url_fn}` [{url_size}]\n\n**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.m4a` \n\nTo Cancel press /cancel")
