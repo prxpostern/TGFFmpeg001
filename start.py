@@ -106,19 +106,18 @@ async def echo(update):
         url_size = get_size(update2.message.document.size)
         url_fn = await update2.get_chat()
     else:
-      if "|" in update2.text:
-        url , cfname = update2.text.split("|", 1)
-        cfname = cfname.strip()
-        filename = os.path.join(download_path, cfname)
-      else:
-        url = update2.text
-        if os.path.splitext(url)[1]:
-            filename = os.path.join(download_path, os.path.basename(url))
+        if "|" in update2.text:
+            url , cfname = update2.text.split("|", 1)
+            cfname = cfname.strip()
+            filename = os.path.join(download_path, cfname)
         else:
-            await update2.reply("No Extension ! Use Custom Filename.")
-            return
+            url = update2.text
+            if os.path.splitext(url)[1]:
+                filename = os.path.join(download_path, os.path.basename(url))
+            else:
+                await update2.reply("No Extension ! Use Custom Filename.")
+                return
     url = url.strip()
-    
     filename = filename.replace('%25','_')
     filename = filename.replace(' ','_')
     filename = filename.replace('%40','@')
@@ -130,17 +129,17 @@ async def echo(update):
 
     msg2 = await update2.reply(f"`{url_fn}` [{url_size}]\n\n**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.m4a` \n\nTo Cancel press /cancel")
     try:
-      async with bot.conversation(update.message.chat_id) as cv:
-        ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+        async with bot.conversation(update.message.chat_id) as cv:
+            ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
     except Exception as e:
-      print(e)
-      await msg2.delete()
-      await update.respond(f"**Conversation 2 Error:**\n\n{e}")
-      return
+        print(e)
+        await msg2.delete()
+        await update.respond(f"**Conversation 2 Error:**\n\n{e}")
+        return
     await msg2.delete()
     if ext1.text == "/cancel":
-      await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
-      return
+        await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
+        return
     
     ########################################################## Step3
 
