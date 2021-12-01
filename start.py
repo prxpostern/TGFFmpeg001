@@ -119,8 +119,8 @@ async def echo(update):
       await update.respond(f"Operation Cancelled By User. \nSend /encode to Start Again!")
       return
     
-    #msg2 = await update.respond(f"`Processing ...`")
-    
+    ########################################################## Start Download Source Media
+    msg4 = await update.respond(f"`Processing ...`")
     if not os.path.isdir(download_path):
       os.mkdir(download_path)
             
@@ -167,6 +167,8 @@ async def echo(update):
     msg5 = await ffcmd1.reply(f"`{ffcmd4}` \n\n Encoding ... \n\n **PLZ Wait 😍 ...**")
     await asyncio.sleep(1)
 
+    ########################################################## Start Encode
+    
     out, err, rcode, pid = await execute(f"{ffcmd4}")
     if rcode != 0:
       print(err)
@@ -185,6 +187,8 @@ async def echo(update):
       os.remove(file_path)
     except:
       pass  
+    
+    ########################################################## Start Upload Destination Media
     
     video_type = ['.mp4','.mkv','.avi','.webm','.wmv','.mov']
     vcheck = os.path.splitext(file_loc2)[1]
