@@ -191,7 +191,7 @@ async def echo(update):
                 pass
             return
             
-    print(f"file downloaded to {file_path}")
+    LOGGER.info(f"file downloaded to {file_path}")
     await msg4.edit(f"✅ Successfully Downloaded.")
     await asyncio.sleep(1)
     ext2 = ext1.text
@@ -208,7 +208,7 @@ async def echo(update):
     
     out, err, rcode, pid = await execute(f"{ffcmd4}")
     if rcode != 0:
-        print(err)
+        LOGGER.info(f"FFMPEG ERROR: {err}")
         await msg5.edit(f"**FFmpeg: Error Occured.**\n\n{err}")
         try:
             os.remove(file_path)
@@ -288,6 +288,7 @@ async def echo(update):
 def main():
     """Start the bot."""
     print("\nBot started ...\n")
+    LOGGER.info(f"\nBot started ...\n")
     bot.run_until_disconnected()
 
 if __name__ == '__main__':
