@@ -254,7 +254,7 @@ async def echo(update):
             update.message.chat_id,
             file=str(file_loc2),
             thumb=thumbnail,
-            caption=f"`{name}`\n\n**Size:** {size}",
+            caption=f"`{name}` [{size}]",
             reply_to=update2.message,
             force_document=False,
             supports_streaming=True,
