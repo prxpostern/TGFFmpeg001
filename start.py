@@ -223,6 +223,7 @@ async def echo(update):
     ########################################################## Upload
     
     probe = await stream_creator(file_loc2)
+    duration = int(float(probe["format"]["duration"]))
     video_type = ['.mp4','.mkv','.avi','.webm','.wmv','.mov']
     vcheck = os.path.splitext(file_loc2)[1]
     if vcheck in video_type:
@@ -232,11 +233,10 @@ async def echo(update):
         video_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'video'), None)
         width = int(video_stream['width'] if 'width' in video_stream else 0)
         height = int(video_stream['height'] if 'height' in video_stream else 0)
-        duration = int(float(probe["format"]["duration"]))
         LOGGER.info(f"width:{width} - height:{height} - duration:{duration} - thumbnail:{thumbnail}")
     else:
         thumbnail = None
-        duration = int(float(probe["format"]["duration"]))
+        LOGGER.info(f"Audio - duration:{duration}")
     
     size = os.path.getsize(file_loc2)
     size = get_size(size)
