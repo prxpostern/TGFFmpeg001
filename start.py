@@ -3,20 +3,14 @@ from telethon.tl.types import DocumentAttributeAudio, DocumentAttributeVideo, Do
 from download_from_url import download_file, get_size
 from file_handler import send_to_transfersh_async, progress, progressb
 from progress_for_telethon import progress2
-import json
-import cryptg
-import os
-import time
-import datetime
-import aiohttp
-import asyncio
-import requests
+import json, logging, cryptg, os, time, datetime, aiohttp, asyncio, requests
 from tools import execute
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from thumbnail_video import thumb_creator
+from ffprobe import stream_creator
 from telethon.tl.types import DocumentAttributeVideo, DocumentAttributeAudio
-import logging
+
 logging.basicConfig(
     level=logging.DEBUG,
     handlers=[logging.FileHandler('log.txt'), logging.StreamHandler()],
@@ -228,21 +222,21 @@ async def echo(update):
     
     ########################################################## Upload
     
+    probe = await stream_creator(file_loc2)
     video_type = ['.mp4','.mkv','.avi','.webm','.wmv','.mov']
     vcheck = os.path.splitext(file_loc2)[1]
     if vcheck in video_type:
+        LOGGER.info(f"Generating thumbnail")
         thumbnail = await thumb_creator(file_loc2)
         thumbnail = str(thumbnail)
-        metadata = extractMetadata(createParser(file_loc2))
-        if metadata:
-            duration = metadata.get("duration").seconds
-            width = metadata.get("width")
-            height = metadata.get("height")
+        video_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'video'), None)
+        width = int(video_stream['width'] if 'width' in video_stream else 0)
+        height = int(video_stream['height'] if 'height' in video_stream else 0)
+        duration = int(float(probe["format"]["duration"]))
+        LOGGER.info(f"width:{width} - height:{height} - duration:{duration} - thumbnail:{thumbnail}")
     else:
         thumbnail = None
-        metadata = extractMetadata(createParser(file_loc2))
-        if metadata:
-            duration = metadata.get("duration").seconds
+        duration = int(float(probe["format"]["duration"]))
     
     size = os.path.getsize(file_loc2)
     size = get_size(size)
