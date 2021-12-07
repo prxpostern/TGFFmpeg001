@@ -218,7 +218,7 @@ async def echo(update):
         except:
             pass        
         return
-    
+    LOGGER.info(out)
     try:
         os.remove(file_path)
         LOGGER.info(f"Deleted: {file_path}")
