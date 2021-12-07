@@ -127,7 +127,7 @@ async def echo(update):
         url_size = get_size(url_size)
     ########################################################## Step2
 
-    msg2 = await update2.reply(f"`{url_fn}` [{url_size}]\n\n**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.m4a` \n\nTo Cancel press /cancel")
+    msg2 = await update2.reply(f"**Source Info:**\n\nFile: `{url_fn}`\nSize: `{url_size}`\n\n**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `_.mp3` \n `32k.aac` \n `_.m4a` \n\nTo Cancel press /cancel")
     try:
         async with bot.conversation(update.message.chat_id) as cv:
             ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
@@ -144,7 +144,7 @@ async def echo(update):
     ########################################################## Step3
 
     msg3 = await ext1.reply(
-      f"`{url_fn}` [{url_size}]\n\n**Step3:** Enter FFmpeg Options: \n\n `-sn -vn -c:a copy` \n\n `-ar 48000 -ab 256k -f mp3` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k -f mp4` \n\nTo Cancel press /cancel"
+      f"Source Info:**\n\nFile: `{url_fn}`\nSize: `{url_size}`\n\n**Step3:** Enter FFmpeg Options: \n\n `-sn -vn -c:a copy` \n\n `-ar 48000 -ab 256k -f mp3` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k -f mp4` \n\nTo Cancel press /cancel"
     )
     try:
         async with bot.conversation(update.message.chat_id) as cv:
